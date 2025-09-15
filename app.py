@@ -53,10 +53,11 @@ if st.sidebar.button("Check Water Safety"):
         pred = model.predict(X)[0]
         prob = np.max(model.predict_proba(X)[0])
 
+        # Simplified labels
         if pred == 0:
-            st.success(f"✅ Water is SAFE ({prob:.2f} confidence)")
+            st.success(f"✅ Safe Water (Confidence: {prob:.2f})")
         else:
-            st.error(f"⚠️ Pathogen Present ({prob:.2f} confidence)")
+            st.error(f"⚠️ Pathogen Detected (Confidence: {prob:.2f})")
 
 # --- Evaluation Section ---
 st.subheader("📊 Model Evaluation (on dataset)")
