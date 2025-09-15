@@ -50,14 +50,15 @@ if st.sidebar.button("Check Water Safety"):
         }])
 
         # Predict
-        pred = model.predict(X)[0]
+        pred = model.predict(X)[0]   # raw 0 or 1
         prob = np.max(model.predict_proba(X)[0])
 
-        # Simplified labels
+        # Show raw result + meaning
+        st.write(f"### Prediction: **{pred}**")
         if pred == 0:
-            st.success(f"✅ Safe Water (Confidence: {prob:.2f})")
+            st.success(f"0 → ✅ Safe Water (Confidence: {prob:.2f})")
         else:
-            st.error(f"⚠️ Pathogen Detected (Confidence: {prob:.2f})")
+            st.error(f"1 → ⚠️ Pathogen Detected (Confidence: {prob:.2f})")
 
 # --- Evaluation Section ---
 st.subheader("📊 Model Evaluation (on dataset)")
@@ -74,15 +75,15 @@ if model is not None and df is not None:
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots(figsize=(4, 3))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                xticklabels=["Safe", "Pathogen"],
-                yticklabels=["Safe", "Pathogen"], ax=ax)
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Actual")
+                xticklabels=[0, 1],
+                yticklabels=[0, 1], ax=ax)
+    ax.set_xlabel("Predicted (0=Safe, 1=Pathogen)")
+    ax.set_ylabel("Actual (0=Safe, 1=Pathogen)")
     ax.set_title("Confusion Matrix")
     st.pyplot(fig)
 
     # Classification Report
-    report = classification_report(y_true, y_pred, target_names=["Safe", "Pathogen"], output_dict=True)
+    report = classification_report(y_true, y_pred, target_names=["Safe (0)", "Pathogen (1)"], output_dict=True)
     st.write("### Classification Report")
     report_df = pd.DataFrame(report).transpose()
     st.dataframe(report_df.style.format(precision=2))
